@@ -50,6 +50,38 @@ function islandora_pdfjs_islandora_viewer_info() {
 }
 
 /**
+ * Implements hook_menu_alter().
+ */
+function islandora_pdfjs_menu_alter(&$items) {
+  /* original code by patrick...@commonmediainc.com adapted for own use */
+  $custom_info = array(
+    'page callback' => '_islandora_pdfjs_islandora_view_datastream',
+    'file' => 'islandora_pdfjs.module',
+    'file path' => drupal_get_path('module', 'islandora_pdfjs'),
+  );
+  $paths = array(
+    'islandora/object/%islandora_object/datastream/%islandora_datastream',
+  );
+  foreach($paths as $path) {
+    if(!empty($items[$path])) {
+      $items[$path] = array_merge($items[$path], $custom_info);
+    }
+  }
+}
+
+function _islandora_pdfjs_islandora_view_datastream(AbstractDatastream $datastream, $download = FALSE, $version = NULL) {
+  module_load_include('inc', 'islandora', 'includes/datastream');
+
+  $needsAcceptRangesHeader = ($datastream->mimetype === 'application/pdf');
+
+  if ($needsAcceptRangesHeader) {
+    header('Accept-Ranges: bytes');
+  }
+
+  islandora_view_datastream($datastream, $download, $version);
+}
+
+/**
  * Callback function for the viewer.
  *
  * @param array $params
