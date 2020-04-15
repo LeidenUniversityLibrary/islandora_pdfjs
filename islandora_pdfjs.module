@@ -95,7 +95,9 @@ function _islandora_pdfjs_islandora_view_datastream(AbstractDatastream $datastre
  */
 function islandora_pdfjs_viewer_callback(array $params, $fedora_object = NULL) {
   $dsid = NULL;
-  if (!empty($params['dsid']) && isset($fedora_object[$params['dsid']]) && islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $fedora_object[$params['dsid']])) {
+  if (!empty($params['dsid']) && isset($fedora_object[$params['dsid']]) && 
+    ($fedora_object[$params['dsid']]->mimetype == 'application/pdf') &&
+    islandora_datastream_access(ISLANDORA_VIEW_OBJECTS, $fedora_object[$params['dsid']])) {
     $dsid = $params['dsid'];
   }
   else {
